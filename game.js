@@ -25,6 +25,10 @@ RectColor("#f00");
 let isGrounded = false;
 let isFalling = true;
 
+let enemyKillCycle = 0;
+
+let invincibility = 10;
+
 let direcction = 
 {
     a: 
@@ -70,6 +74,12 @@ class Slime
         )
         {
             enemies.splice(enemies.indexOf(this), 1);
+            enemyKillCycle++;
+            if(enemyKillCycle == 5)
+            {
+                lives++;
+                enemyKillCycle = 0;
+            }
             if(Math.random() > 0.5) new Slime();
             acceleration = -5; 
         }
@@ -81,13 +91,18 @@ class Slime
             (x >= this.x - 2 && x < this.x + this.w + 2)
         )
         {
-            lives -= 1;
-            enemies.splice(enemies.indexOf(this), 1);
-
-            if(lives == 0)
+            if(invincibility < 0)
             {
-                isAlive = false;
-                gameOverText.classList.remove("hidden");
+                lives -= 1;
+                invincibility = 30;
+                enemyKillCycle = 0;
+                enemies.splice(enemies.indexOf(this), 1);
+    
+                if(lives == 0)
+                {
+                    isAlive = false;
+                    gameOverText.classList.remove("hidden");
+                }
             }
         }
 
@@ -99,6 +114,9 @@ class Slime
 
 function Draw()
 { 
+    invincibility--;
+    console.log(invincibility);
+
     if(!isAlive)
     {
         RectColor("#f00");
@@ -138,7 +156,7 @@ function Draw()
     {
         if(x < WIDTH / 2)
         {
-            x = 100 - w;
+            x = WIDTH - w;
         } else
         {
             x = 0;
