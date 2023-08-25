@@ -29,6 +29,8 @@ let enemyKillCycle = 0;
 
 let invincibility = 10;
 
+let canBomb = true;
+
 let direcction = 
 {
     a: 
@@ -54,6 +56,7 @@ class Slime
         this.y = -10;
         this.w = 10;
         this.h = 10;
+        this.isBlue = Math.floor(Math.random() * 2);
         this.speed = Math.random() + 1;
         enemies.push(this);
     }
@@ -61,7 +64,14 @@ class Slime
     Render()
     {
         Line(this.x + 5, this.y - 5, x + 2, y - 5);
-        DrawImage(spriteSheet, Math.floor(this.x), Math.floor(this.y - this.h), 4, 0, this.w, this.h);
+
+        if(this.isBlue == 0)
+        {
+            DrawImage(spriteSheet, Math.floor(this.x), Math.floor(this.y - this.h), 4, 0, this.w, this.h);
+        } else 
+        {
+            DrawImage(spriteSheet, Math.floor(this.x), Math.floor(this.y - this.h), 14, 0, this.w, this.h);
+        }
     }
 
     Move()
@@ -75,10 +85,13 @@ class Slime
         {
             enemies.splice(enemies.indexOf(this), 1);
             enemyKillCycle++;
-            if(enemyKillCycle == 5)
+            if((enemyKillCycle % 5) == 0)
             {
                 lives++;
-                enemyKillCycle = 0;
+            }
+            if((enemyKillCycle % 20) == 0)
+            {
+                canBomb = true;
             }
             if(Math.random() > 0.5) new Slime();
             acceleration = -5; 
@@ -94,8 +107,7 @@ class Slime
             if(invincibility < 0)
             {
                 lives -= 1;
-                invincibility = 30;
-                enemyKillCycle = 0;
+                invincibility = 15;
                 enemies.splice(enemies.indexOf(this), 1);
     
                 if(lives == 0)
@@ -165,8 +177,10 @@ function Draw()
 
     for(let i = 0; i < lives; i++)
     {
-        DrawImage(spriteSheet, 3 + i * 9 + i * 2, 3, 14, 0, 9, 9);
+        DrawImage(spriteSheet, 3 + i * 9 + i * 2, 3, 24, 0, 9, 9);
     }
+
+    if(canBomb) DrawImage(spriteSheet, 140, 88, 33, 0, 7, 10);
 }
 
 window.addEventListener("keydown", e => 
@@ -178,6 +192,22 @@ window.addEventListener("keydown", e =>
             break;
         case "d":
             direcction.d.pressed = true;
+            break;
+        case "r":
+            window.location.reload();
+            break;
+        case "e":
+            const enemyCount = enemies.length;
+            if(canBomb)
+            {
+                enemies = [];
+            }
+            for(let i = 0; i < Math.floor(enemyCount / 5); i++)
+            {
+                new Slime();
+            } 
+            canBomb = false;
+            lives = 3;
             break;
         case " ":
             if(isGrounded)
