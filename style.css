@@ -1,0 +1,37 @@
+@font-face /* part of the example game */ 
+{
+    font-family: bitstad;
+    src: url(bitstad.ttf);
+}
+
+body 
+{
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+canvas 
+{
+    background-color: black;
+    height: 100vh;
+    image-rendering: pixelated;
+}
+
+h1 /* part of the example game */
+{
+    color: #a00;
+    font-family: bitstad;
+    position: absolute;
+    font-size: 5rem;
+    user-select: none;
+}
+
+.hidden /* part of the example game */
+{
+    display: none;
+}
