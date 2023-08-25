@@ -1,5 +1,5 @@
 # Canvas Script v0.0.1
-## By: Noel Nimstad
+## By: [Noel Nimstad](https://noel.nimstad.com)
 
 <br>
 
