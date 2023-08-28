@@ -52,6 +52,41 @@ function DrawImage(i, x, y, ix, iy, w, h)
     pen.drawImage(i, ix, iy, w, h, x, y, w, h);
 }
 
+let currentFont = "sans-serif";
+let currentTextSize = "50px";
+
+function SetTextFont(font)
+{
+    currentFont = font;
+}
+
+function SetTextSize(size)
+{
+    currentTextSize = size;
+}
+
+function DrawText(text, x, y)
+{
+    pen.fillText(text, x, y);
+}
+
+function StrokeText(text, x, y)
+{
+    pen.strokeText(text, x, y);
+}
+
+async function RegisterFont(title, url, descriptors)
+{
+    let font;
+    if(!descriptors)
+    {
+        font = new FontFace(title, `url(${ url })`);
+    } else font = new FontFace(title, `url(${ url })`, descriptors);
+
+    await font.load();
+    document.fonts.add(font);
+}
+
 // --- CanvasScript LOGIC ---
 
 let drawCalls = [];

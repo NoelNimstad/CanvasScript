@@ -4,6 +4,8 @@
     if you want to change canvas resolution then you do that in canvasscript.js
 */
 
+RegisterFont("bitstad", "bitstad.ttf")
+
 let isAlive = true;
 const gameOverText = document.getElementById("gameOver");
 
@@ -45,8 +47,7 @@ let direcction =
 
 let enemies = [];
 
-LineColor("#444");
-LineWidth(2);
+LineWidth(1);
 
 class Slime
 {
@@ -56,15 +57,14 @@ class Slime
         this.y = -10;
         this.w = 10;
         this.h = 10;
-        this.isBlue = Math.floor(Math.random() * 2);
+        this.isBlue = Math.floor(Math.random() * 2) > 0.75;
         this.speed = Math.random() + 1;
+        if(this.isBlue) this.speed /= 2;
         enemies.push(this);
     }
 
     Render()
     {
-        Line(this.x + 5, this.y - 5, x + 2, y - 5);
-
         if(this.isBlue == 0)
         {
             DrawImage(spriteSheet, Math.floor(this.x), Math.floor(this.y - this.h), 4, 0, this.w, this.h);
@@ -72,6 +72,12 @@ class Slime
         {
             DrawImage(spriteSheet, Math.floor(this.x), Math.floor(this.y - this.h), 14, 0, this.w, this.h);
         }
+    }
+
+    DrawLines()
+    {
+        if(this.isBlue) { LineColor("#00f") } else LineColor("#0f0"); 
+        Line(this.x + 5, this.y - 5, x + 2, y - 5);
     }
 
     Move()
@@ -106,7 +112,11 @@ class Slime
         {
             if(invincibility < 0)
             {
-                lives -= 1;
+                if(!this.isBlue)
+                {
+                    lives -= 1;
+                } else new Slime();
+                
                 invincibility = 15;
                 enemies.splice(enemies.indexOf(this), 1);
     
@@ -127,17 +137,22 @@ class Slime
 function Draw()
 { 
     invincibility--;
-    console.log(invincibility);
 
     if(!isAlive)
     {
         RectColor("#f00");
         Rect(0, 0, WIDTH, HEIGHT);
+        DrawText
         return;   
     }
 
     RectColor("#222");
     Rect(0, 0, WIDTH, HEIGHT);
+
+    for(let enemy of enemies)
+    {
+        enemy.DrawLines();
+    }
 
     for(let enemy of enemies)
     {
@@ -169,9 +184,11 @@ function Draw()
         if(x < WIDTH / 2)
         {
             x = WIDTH - w;
+            new Slime();
         } else
         {
             x = 0;
+            new Slime();
         }
     }
 
@@ -207,7 +224,7 @@ window.addEventListener("keydown", e =>
                 new Slime();
             } 
             canBomb = false;
-            lives = 3;
+            if(lives > 3) lives = 3;
             break;
         case " ":
             if(isGrounded)
@@ -233,5 +250,12 @@ window.addEventListener("keyup", e =>
     }
 });
 
-setInterval(() => new Slime(), 2000);
+setInterval(() => 
+{
+    for(let i = 0; i < lives / 3; i++)
+    {
+        new Slime();
+    }
+}, 3000);
+
 drawCalls.push(Draw);
